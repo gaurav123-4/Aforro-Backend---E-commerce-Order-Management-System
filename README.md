@@ -679,5 +679,6 @@ python manage.py showmigrations
 
 **Project Status**: ✅ Ready for development and testing  
 **Last Updated**: January 2024
-#   A f o r r o - B a c k e n d - - - E - c o m m e r c e - O r d e r - M a n a g e m e n t - S y s t e m  
+#   A f o r r o - B a c k e n d - - - E - c o m m e r c e - O r d e r - M a n a g e m e n t - S y s t e m 
+ 
  
