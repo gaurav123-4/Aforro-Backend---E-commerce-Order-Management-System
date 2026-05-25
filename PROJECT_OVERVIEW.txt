@@ -1,0 +1,65 @@
+Aforro Backend - E-commerce Order Management System
+===================================================
+
+Overview
+--------
+This repository contains a Django REST Framework backend for managing products,
+store inventories, and orders, with Redis caching and Celery async processing.
+It exposes REST APIs for product browsing, inventory lookup, order creation, and
+search/autocomplete.
+
+Tech Stack
+----------
+- Django 4.2.11 + Django REST Framework 3.14.0
+- SQLite for local development, PostgreSQL for production/Docker
+- Redis 7.0 for caching and as the Celery broker/result backend
+- Celery 5.3.4 for background tasks
+- pytest + pytest-django for automated tests
+- Docker + Docker Compose for containerized setup
+
+Project Layout
+--------------
+aforro_project/
+  aforro_project/     Main Django project config (settings, urls, wsgi, celery)
+  apps/
+    products/         Categories, products, stores, and inventory management
+    orders/           Order creation, validation, and order items
+    search/           Product search and autocomplete
+  tests/              API tests per app (products, orders, search)
+  manage.py           Django management entry point
+  Dockerfile
+  docker-compose.yml
+  requirements.txt
+  pytest.ini
+  .env.example
+  db.sqlite3          Local dev database
+  htmlcov/            Coverage report output (generated)
+
+Core Domain Behavior
+--------------------
+- Products app defines Category, Product, Store, and Inventory models and the
+  API endpoints for listing/retrieving them.
+- Orders app creates orders with item validation and stock checks. Order creation
+  is wrapped in an atomic transaction and inventory rows are locked to prevent
+  race conditions. Stock is deducted on CONFIRMED orders.
+- Search app provides keyword search and autocomplete over products.
+
+Caching and Async Processing
+----------------------------
+- Inventory, search results, and autocomplete responses are cached in Redis
+  (5-minute TTL). Inventory cache is invalidated when stock changes.
+- A Celery task runs after order confirmation for async processing (currently a
+  hook for logging/notifications).
+
+API Surface (High Level)
+------------------------
+Base URL: /api
+- Products: /products/products/, /products/categories/, /products/stores/
+- Inventory: /products/stores/{store_id}/inventory/
+- Orders: POST /orders/, GET /orders/{order_id}/, GET /orders/list_orders/
+- Search: /search/products/, /search/suggest/
+
+Testing
+-------
+pytest tests cover products, orders, and search APIs. Fixtures live in
+tests/conftest.py and app-specific tests are under tests/{app}/.
